@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZURICH - Golden Night</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        /* Estilos para los filtros */
+        .filter-container { text-align: center; margin-bottom: 40px; }
+        .filter-btn {
+            background: transparent;
+            color: white;
+            border: 1px solid var(--primary);
+            padding: 10px 25px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary);
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>ZURICH</h1>
+        <span class="subtitle">GOLDEN NIGHT</span>
+    </header>
+
+    <section class="hero">
+        <p>SABOR & CALIDAD</p>
+        <h2>El Mejor Precio</h2>
+        <p style="font-size: 1rem; letter-spacing: 2px; margin-top: 15px; color: white; opacity: 0.7;">Disfrutá la experiencia</p>
+    </section>
+
+    <div class="container">
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filtrar('Todos', this)">Todos</button>
+            <button class="filter-btn" onclick="filtrar('Comidas', this)">Comidas</button>
+            <button class="filter-btn" onclick="filtrar('Bebidas', this)">Bebidas</button>
+            <button class="filter-btn" onclick="filtrar('Postres', this)">Postres</button>
+            <button class="filter-btn" onclick="filtrar('Promos', this)">Promos</button>
+        </div>
+
+        <div id="grid-productos" class="grid">
+            </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2024 ZURICH GOLDEN NIGHT</p>
+        <p style="font-size: 0.8rem; margin-top: 10px; color: #444;">CATAMARCA - ARGENTINA</p>
+    </footer>
+
+    <script>
+        let todosLosProductos = [];
+        let configGlobal = {};
+
+        async function cargarDatos() {
+            try {
+                const [resP, resC] = await Promise.all([fetch('/api/get-productos'), fetch('/api/config')]);
+                todosLosProductos = await resP.json();
+                configGlobal = await resC.json();
+                renderizar(todosLosProductos);
+            } catch (error) {
+                document.getElementById('grid-productos').innerHTML = "<h2>Error al cargar el menú</h2>";
+            }
+        }
+
+        function renderizar(lista) {
+            const container = document.getElementById('grid-productos');
+            if (lista.length === 0) {
+                container.innerHTML = "<h2 style='grid-column: 1/-1; text-align: center; opacity: 0.5;'>SIN PRODUCTOS EN ESTA CATEGORÍA</h2>";
+                return;
+            }
+
+            container.innerHTML = lista.map(p => `
+                <div class="card">
+                    <img src="${p.imagen}" alt="${p.nombre}">
+                    <div class="info">
+                        <span style="color: #666; font-size: 0.7rem; text-transform: uppercase;">${p.categoria || 'General'}</span>
+                        <h3>${p.nombre}</h3>
+                        <div class="price">$${Number(p.precio).toLocaleString('es-AR')}</div>
+                        <a href="https://wa.me/${configGlobal.whatsapp}?text=Hola%20Zurich!%20Me%20interesa:%20${encodeURIComponent(p.nombre)}" 
+                           target="_blank" class="btn-wa">
+                            Pedir por WhatsApp
+                        </a>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filtrar(categoria, btn) {
+            // Cambiar estado visual de botones
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            // Filtrar lógica
+            if (categoria === 'Todos') {
+                renderizar(todosLosProductos);
+            } else {
+                const filtrados = todosLosProductos.filter(p => p.categoria === categoria);
+                renderizar(filtrados);
+            }
+        }
+
+        cargarDatos();
+    </script>
+</body>
+</html>

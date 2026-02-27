@@ -1,0 +1,171 @@
+/* Importamos tipografía de lujo */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700;900&display=swap');
+
+:root {
+    --primary: #f39c12; /* Naranja Zurich */
+    --gold: #ffd700;    /* Oro Golden Night */
+    --bg: #0a0a0a;
+    --card-bg: #151515;
+    --text: #ffffff;
+    --text-muted: #aaaaaa;
+    --whatsapp: #25d366;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg);
+    color: var(--text);
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* --- HEADER --- */
+header {
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    padding: 35px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(243, 156, 18, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 900;
+    font-size: 2.8rem;
+    letter-spacing: 15px;
+    color: var(--primary);
+    text-shadow: 0 0 20px rgba(243, 156, 18, 0.4);
+    line-height: 1;
+}
+
+header .subtitle {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 300;
+    letter-spacing: 8px;
+    color: var(--gold);
+    margin-top: 12px;
+    opacity: 0.9;
+    text-transform: uppercase;
+}
+
+/* --- HERO / BANNER (CORREGIDO CON IMAGEN DE RESTAURANTE) --- */
+.hero {
+    height: 50vh; /* Un poco más alto para lucir la imagen */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    /* Imagen de un restaurante acogedor y elegante */
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), 
+                url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1600&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+    border-bottom: 1px solid #222;
+}
+
+.hero h2 {
+    font-size: 3.2rem; /* Ajuste leve de tamaño */
+    margin: 10px 0;
+    text-transform: uppercase;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.hero p {
+    color: var(--gold);
+    font-size: 1.2rem;
+    letter-spacing: 4px;
+    margin: 0;
+    font-weight: 300;
+}
+
+/* --- CONTENEDOR --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 40px;
+}
+
+/* --- TARJETAS --- */
+.card {
+    background: var(--card-bg);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.4s ease;
+}
+
+.card:hover {
+    transform: translateY(-15px);
+    border-color: var(--gold);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.card img {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    transition: 0.6s;
+}
+
+.card:hover img {
+    transform: scale(1.1);
+}
+
+.info {
+    padding: 30px;
+    text-align: center;
+}
+
+.info h3 {
+    margin: 0 0 10px;
+    font-size: 1.3rem;
+    font-weight: 400;
+    text-transform: uppercase;
+}
+
+.price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 25px;
+}
+
+/* --- BOTÓN WHATSAPP --- */
+.btn-wa {
+    display: block;
+    background: var(--whatsapp);
+    color: #fff;
+    padding: 15px;
+    text-decoration: none;
+    border-radius: 10px;
+    font-weight: 700;
+    transition: 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-wa:hover {
+    background: #1eb954;
+    box-shadow: 0 0 20px rgba(37, 211, 102, 0.3);
+}
+
+/* --- FOOTER --- */
+footer {
+    padding: 60px 20px;
+    text-align: center;
+    background: #050505;
+    border-top: 1px solid #111;
+    color: var(--text-muted);
+}

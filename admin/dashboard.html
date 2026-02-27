@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>ZURICH - Admin Panel</title>
+    <style>
+        :root { --primary: #f39c12; --bg: #121212; --card: #1e1e1e; --text: #fff; }
+        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; display: flex; }
+        .sidebar { width: 220px; background: #000; height: 100vh; padding: 20px; position: fixed; border-right: 1px solid #333; }
+        .nav-link { display: block; color: #aaa; padding: 15px; text-decoration: none; cursor: pointer; border-radius: 5px; margin-bottom: 5px; }
+        .nav-link.active { background: #222; color: var(--primary); font-weight: bold; }
+        .main { margin-left: 260px; padding: 40px; width: 100%; }
+        .panel { background: var(--card); padding: 25px; border-radius: 10px; max-width: 600px; margin-bottom: 30px; }
+        input, select { width: 100%; padding: 12px; margin: 10px 0; background: #222; border: 1px solid #444; color: #fff; border-radius: 5px; }
+        button { width: 100%; padding: 12px; background: var(--primary); border: none; font-weight: bold; cursor: pointer; border-radius: 5px; }
+        .item { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #333; align-items: center; }
+        .item img { width: 50px; height: 50px; object-fit: cover; border-radius: 5px; }
+        .tag { font-size: 0.7rem; background: #444; padding: 2px 8px; border-radius: 10px; color: var(--primary); }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2 style="color:var(--primary)">ZURICH</h2>
+        <div id="btn-p" class="nav-link active">📦 Productos</div>
+        <div id="btn-a" class="nav-link">⚙️ Ajustes</div>
+        <a href="/" class="nav-link">👁️ Ver Tienda</a>
+        <a href="/admin/login.html" style="color:red; margin-top:20px; display:block;">Cerrar Sesión</a>
+    </div>
+
+    <div class="main">
+        <div id="sec-p">
+            <div class="panel">
+                <h3>Subir Nuevo Producto</h3>
+                <form id="fP">
+                    <input type="text" name="nombre" placeholder="Nombre (Ej: Hamburguesa Zurich)" required>
+                    <input type="number" name="precio" placeholder="Precio" required>
+                    <select name="categoria" required>
+                        <option value="Comidas">Comidas</option>
+                        <option value="Bebidas">Bebidas</option>
+                        <option value="Postres">Postres</option>
+                        <option value="Promos">Promos</option>
+                    </select>
+                    <input type="file" name="imagen" required>
+                    <button>PUBLICAR PRODUCTO</button>
+                </form>
+            </div>
+            <div class="panel" style="max-width: 800px;">
+                <h3>Mi Menú</h3>
+                <div id="list"></div>
+            </div>
+        </div>
+
+        <div id="sec-a" style="display:none">
+            <div class="panel">
+                <h3>Ajustes Generales</h3>
+                <form id="fC">
+                    <label>WhatsApp (Sin +)</label>
+                    <input type="text" id="iW" placeholder="5493834...">
+                    <label>Nueva Contraseña Admin</label>
+                    <input type="password" id="iPass" placeholder="Dejar vacío para no cambiar">
+                    <button>GUARDAR AJUSTES</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const bp=document.getElementById('btn-p'), ba=document.getElementById('btn-a'), sp=document.getElementById('sec-p'), sa=document.getElementById('sec-a');
+        
+        bp.onclick=()=>{sp.style.display='block';sa.style.display='none';bp.classList.add('active');ba.classList.remove('active')};
+        ba.onclick=async()=>{
+            sp.style.display='none';sa.style.display='block';ba.classList.add('active');bp.classList.remove('active');
+            const r=await fetch('/api/config'); const c=await r.json(); document.getElementById('iW').value=c.whatsapp;
+        };
+
+        async function listP(){
+            const r=await fetch('/api/get-productos'); const p=await r.json();
+            document.getElementById('list').innerHTML=p.map(x=>`
+                <div class="item">
+                    <div style="display:flex; align-items:center;">
+                        <img src="${x.imagen}">
+                        <div style="margin-left:15px">
+                            <b>${x.nombre}</b> <span class="tag">${x.categoria || 'S/C'}</span><br>
+                            <span style="color:var(--primary)">$${x.precio}</span>
+                        </div>
+                    </div>
+                    <button style="width:auto;background:#e74c3c; padding:5px 10px;" onclick="del(${x.id})">Eliminar</button>
+                </div>
+            `).join('');
+        }
+
+        async function del(id){ if(confirm('¿Seguro quieres eliminar este producto?')){ await fetch('/api/productos/'+id,{method:'DELETE'}); listP(); } }
+        
+        document.getElementById('fP').onsubmit=async(e)=>{
+            e.preventDefault();
+            await fetch('/api/productos',{method:'POST',body:new FormData(e.target)});
+            e.target.reset(); listP();
+        };
+
+        document.getElementById('fC').onsubmit=async(e)=>{
+            e.preventDefault();
+            await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({whatsapp:document.getElementById('iW').value,password:document.getElementById('iPass').value})});
+            alert('Ajustes actualizados correctamente');
+        };
+
+        listP();
+    </script>
+</body>
+</html>
