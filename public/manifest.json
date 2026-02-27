@@ -1,0 +1,16 @@
+{
+  "name": "Zurich Golden Night",
+  "short_name": "Zurich",
+  "description": "Catálogo Digital Zurich",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#f39c12",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1161/1161695.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

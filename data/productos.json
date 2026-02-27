@@ -1,9 +1,30 @@
 [
   {
-    "id": 1772200801034,
+    "id": 1772204366709,
     "nombre": "burger",
     "precio": "6500",
     "categoria": "Comidas",
-    "imagen": "/uploads/1772200801025.jpg"
+    "imagen": "/uploads/1772204366701.jpg"
+  },
+  {
+    "id": 1772204386762,
+    "nombre": "promo 1",
+    "precio": "115",
+    "categoria": "Promos",
+    "imagen": "/uploads/1772204386760.jpg"
+  },
+  {
+    "id": 1772204572455,
+    "nombre": "chocotorta",
+    "precio": "15.000",
+    "categoria": "Postres",
+    "imagen": "/uploads/1772204572452.jpg"
+  },
+  {
+    "id": 1772204712492,
+    "nombre": "bebida",
+    "precio": "10.000",
+    "categoria": "Bebidas",
+    "imagen": "/uploads/1772204712488.webp"
   }
 ]
