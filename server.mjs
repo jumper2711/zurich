@@ -8,24 +8,19 @@ import { fileURLToPath } from 'node:url';
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PORT = process.env.PORT || 3050; // Render usa su propio puerto
+const PORT = process.env.PORT || 3050;
 
-// --- CONFIGURACIÓN DE RUTAS PERSISTENTES ---
-// Si estamos en Render, usamos el Disk montado en /data, si no, la carpeta local
-const DATA_DIR = process.env.RENDER ? '/data' : path.join(__dirname, 'data');
-const UPLOADS_DIR = process.env.RENDER ? '/data/uploads' : path.join(__dirname, 'public/uploads');
+// USAMOS CARPETAS LOCALES (Plan Gratis)
+const DATA_DIR = path.join(__dirname, 'data');
+const UPLOADS_DIR = path.join(__dirname, 'public/uploads');
 
-// Asegurarnos de que las carpetas existan al arrancar
+// Crear carpetas si no existen
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
-// Servir las imágenes desde el disco persistente en Render
-if (process.env.RENDER) {
-    app.use('/uploads', express.static('/data/uploads'));
-}
 app.use('/admin', express.static(path.join(__dirname, 'admin')));
 
 app.use(session({
@@ -36,16 +31,11 @@ app.use(session({
 }));
 
 const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, UPLOADS_DIR);
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + path.extname(file.originalname));
-    }
+    destination: (req, file, cb) => cb(null, UPLOADS_DIR),
+    filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
 });
 const upload = multer({ storage });
 
-// --- CONFIG Y USUARIOS ---
 const obtenerAdmin = () => {
     const ruta = path.join(DATA_DIR, 'usuarios.json');
     if (!fs.existsSync(ruta)) return { email: "admin@zurich.com", password: "123" };
@@ -71,7 +61,6 @@ app.post('/api/config', proteger, (req, res) => {
     res.json({ success: true });
 });
 
-// --- API PRODUCTOS ---
 app.get('/api/get-productos', (req, res) => {
     const ruta = path.join(DATA_DIR, 'productos.json');
     res.json(fs.existsSync(ruta) ? JSON.parse(fs.readFileSync(ruta, 'utf-8') || '[]') : []);
@@ -80,7 +69,6 @@ app.get('/api/get-productos', (req, res) => {
 app.post('/api/productos', proteger, upload.single('imagen'), (req, res) => {
     const ruta = path.join(DATA_DIR, 'productos.json');
     let productos = fs.existsSync(ruta) ? JSON.parse(fs.readFileSync(ruta, 'utf-8') || '[]') : [];
-    
     productos.push({ 
         id: Date.now(), 
         nombre: req.body.nombre, 
@@ -88,7 +76,6 @@ app.post('/api/productos', proteger, upload.single('imagen'), (req, res) => {
         categoria: req.body.categoria,
         imagen: `/uploads/${req.file.filename}` 
     });
-    
     fs.writeFileSync(ruta, JSON.stringify(productos, null, 2));
     res.json({ success: true });
 });
@@ -99,8 +86,7 @@ app.delete('/api/productos/:id', proteger, (req, res) => {
     let productos = JSON.parse(fs.readFileSync(ruta, 'utf-8'));
     const prod = productos.find(p => p.id === id);
     if (prod) {
-        const fotoNombre = prod.imagen.split('/').pop();
-        const rutaFoto = path.join(UPLOADS_DIR, fotoNombre);
+        const rutaFoto = path.join(UPLOADS_DIR, prod.imagen.split('/').pop());
         if (fs.existsSync(rutaFoto)) fs.unlinkSync(rutaFoto);
     }
     fs.writeFileSync(ruta, JSON.stringify(productos.filter(p => p.id !== id), null, 2));
@@ -118,7 +104,4 @@ app.post('/api/login', (req, res) => {
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public/index.html')));
 app.get('/admin/dashboard.html', proteger, (req, res) => res.sendFile(path.join(__dirname, 'admin/dashboard.html')));
 
-app.listen(PORT, () => {
-    console.log(`\n🚀 ZURICH GOLDEN NIGHT OPERATIVO`);
-    console.log(`🌍 En internet: https://zurich-golden-night.onrender.com`);
-});
+app.listen(PORT, () => console.log(`🚀 ZURICH OPERATIVO EN PUERTO ${PORT}`));
