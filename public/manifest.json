@@ -1,7 +1,7 @@
 {
   "name": "milo sabores del paladar",
   "short_name": "milo",
-  "description": "Catálogo Digital Zurich",
+  "description": "Catálogo Digital milo",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#121212",

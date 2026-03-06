@@ -38,7 +38,7 @@ const upload = multer({ storage });
 
 const obtenerAdmin = () => {
     const ruta = path.join(DATA_DIR, 'usuarios.json');
-    if (!fs.existsSync(ruta)) return { email: "admin@zurich.com", password: "123" };
+    if (!fs.existsSync(ruta)) return { email: "admin@milo.com", password: "1234" };
     return JSON.parse(fs.readFileSync(ruta, 'utf-8'));
 };
 
@@ -56,7 +56,7 @@ app.post('/api/config', proteger, (req, res) => {
     const { whatsapp, password } = req.body;
     fs.writeFileSync(path.join(DATA_DIR, 'config.json'), JSON.stringify({ whatsapp }, null, 2));
     if (password && password.trim() !== "") {
-        fs.writeFileSync(path.join(DATA_DIR, 'usuarios.json'), JSON.stringify({ email: "admin@zurich.com", password }, null, 2));
+        fs.writeFileSync(path.join(DATA_DIR, 'usuarios.json'), JSON.stringify({ email: "admin@milo.com", password }, null, 2));
     }
     res.json({ success: true });
 });
